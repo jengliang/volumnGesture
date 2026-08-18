@@ -17,7 +17,7 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import IAudioEndpointVolume
 
 # Keep in sync with the extension manifest.json "version".
-NATIVE_HOST_VERSION = "4.1.0"
+NATIVE_HOST_VERSION = "4.2.0"
 
 VK_MEDIA_NEXT_TRACK = 0xB0
 VK_MEDIA_PREV_TRACK = 0xB1

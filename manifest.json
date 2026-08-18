@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Volume Gesture - Video Navigator",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Navigate between videos with headset volume buttons. Volume Up→Down = next video, Down→Up = previous. Works when minimized.",
   "permissions": [
     "storage",

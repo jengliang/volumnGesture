@@ -1,12 +1,12 @@
 # Volume Gesture — Video Navigator
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub tag v4.1.0](https://img.shields.io/badge/GitHub-v4.1.0-24292f?logo=github)](https://github.com/jengliang/volumeGesture/releases/tag/v4.1.0)
+[![GitHub tag v4.2.0](https://img.shields.io/badge/GitHub-v4.2.0-24292f?logo=github)](https://github.com/jengliang/volumeGesture/releases/tag/v4.2.0)
 [![Edge Add-on](https://img.shields.io/badge/Edge-Add--on-0078D4?logo=microsoftedge&logoColor=white)](https://microsoftedge.microsoft.com/addons/detail/dafhmbjblhplgpnbkbhajnpheaenfdcb)
 
 **Microsoft Edge extension + Windows native host** — navigate between videos with your headset’s hardware volume buttons (Bluetooth or wired). Works even when the browser is minimized on many sites (see [Limitations](#limitations)).
 
-This README documents **[v4.1.0](https://github.com/jengliang/volumeGesture/tree/v4.1.0)** ([release](https://github.com/jengliang/volumeGesture/releases/tag/v4.1.0), [`manifest.json` at this tag](https://github.com/jengliang/volumeGesture/blob/v4.1.0/manifest.json)).
+This README documents **[v4.2.0](https://github.com/jengliang/volumeGesture/tree/v4.2.0)** ([release](https://github.com/jengliang/volumeGesture/releases/tag/v4.2.0), [`manifest.json` at this tag](https://github.com/jengliang/volumeGesture/blob/v4.2.0/manifest.json)).
 
 ## Screenshots
 
@@ -79,8 +79,8 @@ After a store install, the extension ID is **`dafhmbjblhplgpnbkbhajnpheaenfdcb`*
 
 The native host watches system volume and detects hardware button patterns. The extension cannot work without it.
 
-1. Download **`native-host-4.1.0.zip`** from the **[v4.1.0 release](https://github.com/jengliang/volumeGesture/releases/tag/v4.1.0)**  
-   ([direct download](https://github.com/jengliang/volumeGesture/releases/download/v4.1.0/native-host-4.1.0.zip))
+1. Download **`native-host-4.2.0.zip`** from the **[v4.2.0 release](https://github.com/jengliang/volumeGesture/releases/tag/v4.2.0)**  
+   ([direct download](https://github.com/jengliang/volumeGesture/releases/download/v4.2.0/native-host-4.2.0.zip))
 2. Extract to a permanent folder (for example `C:\VolumeGesture\`)
 3. Run **`install.bat`**
 4. When prompted for the extension ID:
@@ -133,7 +133,7 @@ reg delete "HKCU\Software\Microsoft\Edge\NativeMessagingHosts\com.volgesture.vol
 
 ## Building from source
 
-Source for this version: **[v4.1.0](https://github.com/jengliang/volumeGesture/tree/v4.1.0)** ([zip](https://github.com/jengliang/volumeGesture/archive/refs/tags/v4.1.0.zip)).
+Source for this version: **[v4.2.0](https://github.com/jengliang/volumeGesture/tree/v4.2.0)** ([zip](https://github.com/jengliang/volumeGesture/archive/refs/tags/v4.2.0.zip)).
 
 ### Package the extension (store / sideload ZIP)
 
@@ -143,7 +143,7 @@ python build.py
 
 Use **Python 3.7+**. The output ZIP name follows **`manifest.json`** `version` (`volumeGesture-<version>.zip`).
 
-To also build the **native host** bundle for a GitHub release (same layout as **`native-host-4.1.0.zip`**; includes **`volume_monitor.exe`** when that file is present under `native_host/`):
+To also build the **native host** bundle for a GitHub release (same layout as **`native-host-4.2.0.zip`**; includes **`volume_monitor.exe`** when that file is present under `native_host/`):
 
 ```bash
 python build.py --native-host

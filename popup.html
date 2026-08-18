@@ -37,6 +37,68 @@
       <p class="hint">For scroll-to-play sites (e.g. MSN): how far each gesture scrolls the page.</p>
     </div>
 
+    <div class="setting-group">
+      <label class="toggle-row">
+        <span class="label-text">Auto-skip by type</span>
+        <label class="switch">
+          <input type="checkbox" id="autoSkipByType">
+          <span class="slider"></span>
+        </label>
+      </label>
+      <p class="hint">Automatically skip visible short/reel-style videos whose nearby text matches a keyword.</p>
+    </div>
+
+    <div class="setting-group">
+      <label class="toggle-row">
+        <span class="label-text">Auto-click Skip Ads</span>
+        <label class="switch">
+          <input type="checkbox" id="autoClickSkipAds">
+          <span class="slider"></span>
+        </label>
+      </label>
+      <p class="hint">Automatically clicks visible Skip Ads buttons when they appear.</p>
+    </div>
+
+    <div class="setting-group">
+      <label class="toggle-row">
+        <span class="label-text">Show video info after gesture</span>
+        <label class="switch">
+          <input type="checkbox" id="showGestureVideoInfo">
+          <span class="slider"></span>
+        </label>
+      </label>
+      <p class="hint">After a forward/backward gesture, briefly shows the text used for keyword matching.</p>
+    </div>
+
+    <div class="setting-group">
+      <label class="toggle-row">
+        <span class="label-text">Show video release date</span>
+        <label class="switch">
+          <input type="checkbox" id="showVideoReleaseDate">
+          <span class="slider"></span>
+        </label>
+      </label>
+      <p class="hint">When a clip starts playing, briefly shows its original release/made date (top-center). Uses source links when the page looks like a forward/repost.</p>
+    </div>
+
+    <div class="setting-group">
+      <label class="label-text" for="autoSkipMaxAge">Auto-skip older than</label>
+      <select id="autoSkipMaxAge">
+        <option value="">Off</option>
+        <option value="1d">1 day</option>
+        <option value="1w">1 week</option>
+        <option value="1m">1 month</option>
+        <option value="1y">1 year</option>
+      </select>
+      <p class="hint">Automatically skip to the next clip when the resolved release/made date is older than this range.</p>
+    </div>
+
+    <div class="setting-group">
+      <label class="label-text" for="autoSkipKeywords">Auto-skip keywords</label>
+      <textarea id="autoSkipKeywords" rows="3" spellcheck="false"></textarea>
+      <p class="hint">Comma-separated keywords, e.g. sponsored, paid partnership, #ad, ad, gaming.</p>
+    </div>
+
     <div class="gesture-guide">
       <div class="gesture">
         <span class="gesture-icon">🔊→🔉</span>

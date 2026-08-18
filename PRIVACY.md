@@ -1,6 +1,6 @@
 # Privacy Policy — Volume Gesture
 
-**Last updated:** April 21, 2026 (extension / native host v4.1.0)
+**Last updated:** August 17, 2026 (extension / native host v4.2.0)
 
 ## Data Collection
 
