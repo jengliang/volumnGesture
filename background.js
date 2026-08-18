@@ -1116,6 +1116,39 @@ function installAutoSkipMonitor(config) {
   var FAST_CHECK_WINDOW_MS = 2500;
   var ATTEMPT_COOLDOWN_MS = 1000;
 
+  // Session-wide: once we auto-skipped a clip (ads/keywords), don't skip it again
+  // if the user navigates back to watch it.
+  function skipExemptMap() {
+    try {
+      var root = window.top || window;
+      if (!root.__volGestureSkipExemptIds) root.__volGestureSkipExemptIds = {};
+      return root.__volGestureSkipExemptIds;
+    } catch (_) {
+      if (!window.__volGestureSkipExemptIds) window.__volGestureSkipExemptIds = {};
+      return window.__volGestureSkipExemptIds;
+    }
+  }
+
+  function currentClipKey() {
+    var path = location.pathname || "";
+    var m = path.match(/\/(?:reel|reels|videos|shorts)\/([\w-]+)/i);
+    if (m) return m[1];
+    try {
+      var v = new URL(location.href).searchParams.get("v");
+      if (v) return String(v);
+    } catch (_) {}
+    return String(location.href || "").split("#")[0];
+  }
+
+  function isSkipExempt(key) {
+    return !!(key && skipExemptMap()[key]);
+  }
+
+  function markSkipExempt(key) {
+    if (!key) return;
+    skipExemptMap()[key] = true;
+  }
+
   function parseKeywords(raw) {
     return String(raw || "")
       .split(",")
@@ -1427,27 +1460,31 @@ function installAutoSkipMonitor(config) {
   function check() {
     if (!state.config.enabled) return;
     var now = Date.now();
+    var clipKey = currentClipKey();
 
     // Skip-ads must run even when keyword list is empty, and must not
     // permanently consume the check loop on a failed/sticky match.
     if (state.config.autoClickSkipAdsEnabled && now - state.lastAdSkipAt >= 1500) {
-      var adButton = findSkipAdsButton();
-      if (adButton) {
-        state.lastAdSkipAt = now;
-        requestSkipAdsClick(function (ok) {
-          if (ok) {
-            showOverlay("", "Skipped previous Ads");
-            // Background also broadcasts reset to all frames; call locally too
-            // so same-frame monitors refresh immediately.
-            try {
-              window.__volGestureAdSkipAt = Date.now();
-              if (typeof window.__volGestureResetReleaseDateGates === "function") {
-                window.__volGestureResetReleaseDateGates();
-              }
-            } catch (_) {}
-            triggerFastChecks();
-          }
-        });
+      if (!isSkipExempt(clipKey)) {
+        var adButton = findSkipAdsButton();
+        if (adButton) {
+          state.lastAdSkipAt = now;
+          requestSkipAdsClick(function (ok) {
+            if (ok) {
+              markSkipExempt(clipKey);
+              showOverlay("", "Skipped previous Ads");
+              // Background also broadcasts reset to all frames; call locally too
+              // so same-frame monitors refresh immediately.
+              try {
+                window.__volGestureAdSkipAt = Date.now();
+                if (typeof window.__volGestureResetReleaseDateGates === "function") {
+                  window.__volGestureResetReleaseDateGates();
+                }
+              } catch (_) {}
+              triggerFastChecks();
+            }
+          });
+        }
       }
     }
 
@@ -1455,6 +1492,7 @@ function installAutoSkipMonitor(config) {
     var keywords = parseKeywords(state.config.keywords);
     if (!keywords.length) return;
     if (now - state.lastSkipAt < ATTEMPT_COOLDOWN_MS) return;
+    if (isSkipExempt(clipKey)) return;
 
     var video = activeVideo();
     if (!video || !isShortFormContext(video)) return;
@@ -1474,6 +1512,7 @@ function installAutoSkipMonitor(config) {
         showOverlay(match, noMoveTitleForDirection(direction));
         return;
       }
+      markSkipExempt(clipKey);
       // Popup appears after navigation, same timing as skip-ads.
       showOverlay(match, matchTitleForDirection(direction));
 
@@ -1915,7 +1954,7 @@ function installReleaseDateMonitor(config) {
   };
 
   if (window.__volGestureReleaseDate &&
-      window.__volGestureReleaseDate.version === 22 &&
+      window.__volGestureReleaseDate.version === 23 &&
       window.__volGestureReleaseDate.updateConfig) {
     window.__volGestureReleaseDate.updateConfig(config);
     return;
@@ -2031,6 +2070,28 @@ function installReleaseDateMonitor(config) {
 
   function alive() {
     return !state.dead && state.config && state.config.enabled;
+  }
+
+  // Shared with auto-skip monitor via window.top so returning to a clip we already
+  // age-/ad-skipped does not auto-skip again this session.
+  function skipExemptMap() {
+    try {
+      var root = window.top || window;
+      if (!root.__volGestureSkipExemptIds) root.__volGestureSkipExemptIds = {};
+      return root.__volGestureSkipExemptIds;
+    } catch (_) {
+      if (!window.__volGestureSkipExemptIds) window.__volGestureSkipExemptIds = {};
+      return window.__volGestureSkipExemptIds;
+    }
+  }
+
+  function isSkipExempt(id) {
+    return !!(id && skipExemptMap()[id]);
+  }
+
+  function markSkipExempt(id) {
+    if (!id) return;
+    skipExemptMap()[id] = true;
   }
 
   function rememberDateForId(id, unixOrRaw) {
@@ -3004,6 +3065,11 @@ function installReleaseDateMonitor(config) {
       }
       setTimeout(prefetchNearbyReelDates, 300);
 
+      // User already bounced off this clip once (age/ads); let them watch on return.
+      if (idNow && isSkipExempt(idNow)) {
+        return true;
+      }
+
       if (tooOld && Date.now() - state.lastAgeSkipAt >= 1500) {
         state.lastAgeSkipAt = Date.now();
         var skippedId = contentIdNow || contentId || "";
@@ -3013,6 +3079,7 @@ function installReleaseDateMonitor(config) {
           requestAgeSkip(function (ok) {
             dismissReleaseToasts();
             if (ok) {
+              markSkipExempt(skippedId);
               showOverlay(
                 "Skipped previous video due to " +
                   best.label +
@@ -3369,7 +3436,7 @@ function installReleaseDateMonitor(config) {
 
   window.__volGestureResetReleaseDateGates = resetGates;
   window.__volGestureReleaseDate = {
-    version: 22,
+    version: 23,
     updateConfig: updateConfig,
     resetGates: resetGates,
     kill: function () {
